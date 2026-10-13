@@ -7,6 +7,13 @@
 > rates — **including the author's own systematic failures**. All cases here are
 > *post-hoc, independent reproductions* of publicly disclosed contest results, not
 > contest submissions by the author.
+>
+> Four failure directions are catalogued: **under-grading**, **severity merging**,
+> **false positives**, and — added by CASE-04 — **answer-key deference**, i.e. cases
+> where a *correct, code-proven* disproof of the author's was overturned merely because
+> the official judgement disagreed, with the error documented byte-for-byte against
+> upstream OpenZeppelin v4.9.6 source (`sha256 82789e6b…`). The answer key is treated
+> here as **a judgement, not as ground truth** — and is itself audited.
 
 ---
 
@@ -27,15 +34,17 @@
 
 ## 0.1 案例索引
 
-配套的三篇技术文，覆盖 2 个靶、3 种结局：
+配套的四篇技术文，覆盖 3 个靶、**4 种结局**：
 
 | 文件 | 靶 | 内容 | 我的结局 |
 |---|---|---|---|
 | [`CASE-01_morpho-deleverage-dos.md`](CASE-01_morpho-deleverage-dos.md) | morpho-x-index (#23) | 去杠杆全线 revert —— 一个"救不了"的杠杆头寸 | ✅ 命中，**判级持平 High** |
 | [`CASE-02_crestal-eip712-replay.md`](CASE-02_crestal-eip712-replay.md) | crestal-network (#30) | 一个 typehash 被五个函数共用 ⇒ 跨动作签名重放 | ✅ 命中根因，❌ **级别合并错误** |
 | [`CASE-03_morpho-false-positive.md`](CASE-03_morpho-false-positive.md) | morpho-x-index (#23) | 我的**唯一一次误报**：参数依赖的赎回 DoS | ❌ **误纳 1** |
+| [`CASE-04_axion-undersevery-and-answer-key.md`](CASE-04_axion-undersevery-and-answer-key.md) | axion (#22) | 判级 14/14 全偏低、漏族 ≥12；**外加把自己的正确否证改判为错** | ❌ 判级全崩 ＋ ❌❌ **服从答案键** |
 
-三篇合起来是样本集里最有信息量的三个点：**一次做对、一次做对一半、一次做错。**
+四篇合起来是样本集里最有信息量的四个点：**一次做对、一次做对一半、一次做错、一次"做对了却又自己改错"。**
+最后一个方向（CASE-04）是唯一一个**不能用"对自己更严格"来修**的 —— 它的修法是「同样严格地对答案」。
 
 ---
 
@@ -130,7 +139,13 @@ Issues Ratio = valid issues / total issues submitted  ≥ 20%
 | 29 | pareto-usp-2025-04 | 9 / 10 | 1 | — | 6 | ≈14 簇 |
 | 30 | crestal-network-2025-03 | **12 / 12** | **0** | **4**（涉 ≥15 valid，含 5 High） | 8 | 8 大族 |
 
-> ⚠️ **上表 #30 的"判级偏低 8"取自当时的成绩单。** 写 [`CASE-02`](CASE-02_crestal-eip712-replay.md) 复查时发现该成绩单另有一处**未计入**的错误 —— 一条自评 High 的主张实际对应官方的 Medium（详见 §5.5）。**保留这个不一致，而不是回头修正它**：它说明"我当时给自己打分的口径"本身也需要校准，而这恰恰是校准工作的意义。
+> ⚠️ **上表两处需要标注，且都不回头修正。**
+>
+> **(1) `#30` 的"判级偏低 8"** 取自当时的成绩单。写 [`CASE-02`](CASE-02_crestal-eip712-replay.md) 复查时发现该成绩单另有一处**未计入**的错误 —— 一条自评 High 的主张实际对应官方的 Medium（详见 §5.5）。
+>
+> **(2) `#22` 的"误纳 0"** 也需要限定：该靶 `invalid/` 为**空目录** ⇒ **误报率不可测**，这一格实际是"未知"而非"0"。同时该靶的**误剔栏是空的** —— 而写 [`CASE-04`](CASE-04_axion-undersevery-and-answer-key.md) 时核实：我当时的成绩单把 **2 条正确的自我否证**记成了"误判"（详见 §5.6），也就是说这一行既有**未记录的漏**（`001/` 单族 68 条），又有**不存在的错**（被冤枉的否证）。**该行需要重读，但我保留原样。**
+>
+> 保留这两处不一致，而不是回头改数字：它说明"我当时给自己打分的口径"本身也需要校准，而这恰恰是校准工作的意义。
 
 ### 4.3 两条趋势（这是全表唯一有意义的信息）
 
@@ -189,7 +204,7 @@ Issues Ratio = valid issues / total issues submitted  ≥ 20%
 
 ### 5.5 级别合并（写这批文档时才发现的新病灶）
 
-**这一条是本目录里唯一一条"我原先的成绩单漏记、在写 writeup 复查时才暴露"的错误。**
+**这是本目录里第一条「我原先的成绩单漏记、在写 writeup 复查时才暴露」的错误**（第二条见 §5.6）。
 
 `#30` 的 F3（EIP-712 跨函数重放）我自评 **High**，成绩单记为"判级准确"。但复查官方判罚仓时发现：**官方把同一个根因按后果强度拆成了两个级别** ——
 
@@ -205,3 +220,30 @@ Issues Ratio = valid issues / total issues submitted  ≥ 20%
 > **固化规则（新）**：一个根因若同时产生**后果强度不同**的多条路径，必须**按后果分列**、各自判级，不能合并为一个 finding 取最高级。
 > 判别标准：**资金是否离开受害者的控制范围** + **能否重复**。
 > ——"留在他自己名下的资产里"与"流出到协议外且可重复"是两档，不是一档。
+
+### 5.6 服从答案键（CASE-04 才发现 —— 唯一一个"更严格地对自己"修不好的病灶）
+
+前五类都指向同一个方向：**我太宽松、我漏了、我判低了**。所以修法也都在同一个方向：更严格地对待自己。
+
+**这一类反过来了。** `#22` 里我写下了对自己否证的完整推理与源码证据（`MasterAMO` 未调 `__ReentrancyGuard_init()` ⇒ 非漏洞），开封对账时看到官方判 **High**，就把结论改判成了「**我错了**」，还给它编了一句自我归因。
+
+写 CASE-04 时回码复核 —— **那个自我归因是错的**。OZ v4.9.6 源码逐字（与上游**比特级一致**，`sha256 82789e6b…`）：
+
+```solidity
+35:    uint256 private constant _NOT_ENTERED = 1;
+36:    uint256 private constant _ENTERED = 2;
+38:    uint256 private _status;                            // 默认 0
+63:    require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
+```
+
+`__ReentrancyGuard_init()` 的全部作用是把 `_status` 从 `0` 改成 `1`；而守卫判定式是 `_status != 2`。
+`0 != 2` 与 `1 != 2` 同为真 ⇒ **初始化与否不改变守卫的任何一次判定**。条目所称的
+"complete loss of reentrancy protection" 在代码层不成立（另两条证据见 CASE-04 §6.2：6/6 外部入口均带 `nonReentrant`；该条目自己的前置条件就要求特权调用者 + 恶意池）。
+
+**危害不是少赚钱，而是测出来的画像失真** —— 成绩单上写着「我误判 2 条」，实际是「我误判 1 条 + 2 条正确否证被冤枉」。
+一个偏保守的错误率，会让我**在不该让步的地方让步**。赏金提交里等价的失效模式：证据已经站得住了，却因为"评委可能会觉得没影响"而把 finding 砍掉。
+
+> **固化规则（新）**：**答案键不是地面真值。** 凡我**已用源码逐字或已执行 PoC** 否证过的条目，遭官方否定时：① 在成绩单里单独开一栏「我不同意」，写明代码证据；② 要求官方条目给出**代码层可验证的新证据**才能推翻我；③ 否则标记 **CONTESTED**，不得仅凭「官方判 High」就改判自己。
+>
+> **反向门槛（必须同时满足，否则本条会被滥用成自我辩护）**：该规则**只**适用于否证同时具备 **(a) 源码逐字引用（含精确 `file:line`）** 与 **(b) 可复现实证（PoC 执行 / 比特级比对 / grep 全树 0 命中）** 的情形。若否证建立在**推理 + 假设**上 ⇒ 官方优先级更高，照旧改判自己。
+> 判别式一句话：**否证是「事实」还是「我觉得」？前者遭否时先怀疑官方；后者遭否时先怀疑自己。**
