@@ -20,10 +20,11 @@
 
 | 文件 | 靶 | 内容 | 结局 |
 |---|---|---|---|
-| [`calibration/README.md`](calibration/README.md) | — | 方法 + 30 靶成绩单 + 失败分类学（含 4 类系统性疾病） | — |
+| [`calibration/README.md`](calibration/README.md) | — | 方法 + 30 靶成绩单 + 失败分类学（含 5 类系统性疾病） | — |
 | [`CASE-01`](calibration/CASE-01_morpho-deleverage-dos.md) | morpho-x-index | 去杠杆全线 revert —— 一个"救不了"的杠杆头寸 | ✅ 命中，判级持平 High |
 | [`CASE-02`](calibration/CASE-02_crestal-eip712-replay.md) | crestal-network | 一个 typehash 被五个函数共用 ⇒ 跨动作签名重放 | ✅ 命中根因，❌ 级别合并错误 |
 | [`CASE-03`](calibration/CASE-03_morpho-false-positive.md) | morpho-x-index | 我的**唯一一次误报**：参数依赖的赎回 DoS | ❌ 误纳 |
+| [`CASE-04`](calibration/CASE-04_axion-undersevery-and-answer-key.md) | axion | 判级 14/14 全偏低 + 漏族 ≥12；**并把正确答案自己改错** | ❌ 双错（含服从答案键） |
 
 **与上面两个原创样例的区别**：样例 1/2 是**原创的合成靶**（我自己写的漏洞合约，用来测工具）；校准集是**已公开的历史漏洞的事后独立复现**，作者**不是**当时比赛的参赛者。二者的用途不同：前者测"工具能不能发现新形态"，后者测"人能不能在不知道答案时走到官方结论"。
 
@@ -65,4 +66,5 @@ calibration/README.md                       校准方法 + 30 靶成绩单 + 失
 calibration/CASE-01_morpho-deleverage-dos.md    案例：去杠杆 DoS（命中，High）
 calibration/CASE-02_crestal-eip712-replay.md    案例：EIP-712 跨动作重放（命中根因）
 calibration/CASE-03_morpho-false-positive.md    案例：我唯一一次误报（附否证复盘）
+calibration/CASE-04_axion-undersevery-and-answer-key.md  案例：判级全崩 + 服从答案键（含对答案键本身的复核）
 ```
