@@ -34,7 +34,7 @@
 
 ## 0.1 案例索引
 
-配套的四篇技术文，覆盖 3 个靶、**4 种结局**：
+配套的**五篇**技术文，覆盖 4 个靶、**5 个样本点**：
 
 | 文件 | 靶 | 内容 | 我的结局 |
 |---|---|---|---|
@@ -42,9 +42,10 @@
 | [`CASE-02_crestal-eip712-replay.md`](CASE-02_crestal-eip712-replay.md) | crestal-network (#30) | 一个 typehash 被五个函数共用 ⇒ 跨动作签名重放 | ✅ 命中根因，❌ **级别合并错误** |
 | [`CASE-03_morpho-false-positive.md`](CASE-03_morpho-false-positive.md) | morpho-x-index (#23) | 我的**唯一一次误报**：参数依赖的赎回 DoS | ❌ **误纳 1** |
 | [`CASE-04_axion-undersevery-and-answer-key.md`](CASE-04_axion-undersevery-and-answer-key.md) | axion (#22) | 判级 14/14 全偏低、漏族 ≥12；**外加把自己的正确否证改判为错** | ❌ 判级全崩 ＋ ❌❌ **服从答案键** |
+| [`CASE-05_gamma-rewarder-claimtest-unchecked-drain.md`](CASE-05_gamma-rewarder-claimtest-unchecked-drain.md) | gamma-rewarder (#4) | 反向配平治好误剔（0 误剔），却暴露低估 2 级 + 漏掉 3 条官方 High | ⚠️ 闸门达标但**短板迁移** |
 
-四篇合起来是样本集里最有信息量的四个点：**一次做对、一次做对一半、一次做错、一次"做对了却又自己改错"。**
-最后一个方向（CASE-04）是唯一一个**不能用"对自己更严格"来修**的 —— 它的修法是「同样严格地对答案」。
+五篇合起来是样本集里最有信息量的五个点：**一次做对、一次做对一半、一次做错、一次"做对了却又自己改错"、一次"闸门达标但短板换边"。**
+最后一个方向（CASE-04）是唯一一个**不能用"对自己更严格"来修**的 —— 它的修法是「同样严格地对答案」。CASE-05 则说明：即使修好了"对自己太宽松"，另一头（低估、漏报）也会冒出来，两头的病不会同时消失。
 
 ---
 
